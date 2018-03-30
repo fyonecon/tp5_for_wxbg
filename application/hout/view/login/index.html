@@ -1,0 +1,49 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <!--<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0;"/>-->
+    <title>管理员登录</title>
+    <link href="__STATIC__/css/base.css" rel="stylesheet" type="text/css">
+    <script src="__STATIC__/js/jquery.js"></script>
+</head>
+
+<body style="background:#fff">
+<div class="login">
+    <div class="loginTop">
+        <p><span class="s1">后台管理系统</span><span class="s2"><a target="_blank" href="" >帮助中心</a></span></p>
+    </div>
+    <div class="loginForm">
+        <form name="login" action="{:url('hout/login/login')}" method="post" class="Validform">
+            <dl>
+                <dt>管理员登录</dt>
+                <dd>
+                    <input class="user" type="text" name="username" datatype="*3-16" errormsg="用户名不正确！"/>
+                    <br>
+                    <span class="Validform_checktip">输入登录用户</span></dd>
+                <dd>
+                    <input class="pw" type="password" name="password" datatype="*3-16" errormsg="密码不正确！"/>
+                    <span class="Validform_checktip">输入登录密码</span></dd>
+                <dd>
+                    <input class="btn" type="submit" value="登  录" style="cursor:pointer" />
+                </dd>
+            </dl>
+        </form>
+    </div>
+    <div class="loginBot">power by 长沙一果网络科技有限公司 版权所有</div>
+</div>
+<script>
+    {if(session('msg'))}
+    alert("{:session('msg')}");
+    {/if}
+</script>
+<script src="__STATIC__/js/Validform.js"></script>
+<script type="text/javascript">
+    $(function(){
+        $(".Validform").Validform({
+            tiptype:4
+        });
+    })
+</script>
+</body>
+</html>

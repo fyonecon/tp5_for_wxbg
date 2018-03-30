@@ -1,0 +1,57 @@
+{extend name="layout/base" /}
+{block name="title"}{$title} {/block}
+{block name="header"}
+<script src="/static/admin/js/jquery.js"></script>
+{/block}
+{block name="body"}
+<div class="info">
+    <div class="tit">{$title} <a class="add" href="{:url('edit')}"> 添加 </a></div>
+    <div class="search">
+        <form action="" method="get">
+            <input type="text" name="name" placeholder="姓名" class="w200">
+            <input type="submit" class="coolbg" value="搜索" style="cursor:pointer" />
+        </form>
+    </div>
+</div>
+<div class="list mT10">
+    <form name="CheckboxForm" action="" method="post">
+        <table width="100%" border="0" cellpadding="0" cellspacing="0">
+            <tr class="tit">
+                <th>id</th>
+                <th>姓名</th>
+                <th>用户名</th>
+                <th>手机</th>
+                <th>邮箱</th>
+                <th>管理员组</th>
+                <th>登录时间</th>
+                <th>登录ip</th>
+                <th>添加时间</th>
+                <th width="120">操作</th>
+            </tr>
+            {foreach ($data['data'] as $key=>$v)}
+            <tr>
+                <td>{$v['id']}</td>
+                <td>{$v['name']}</td>
+                <td>{$v['username']}</td>
+                <td>{$v['mobile']}</td>
+                <td>{$v['email']}</td>
+                <td>{$v['admingroup']['name']}</td>
+                <td>{$v['login_time']}</td>
+                <td>{$v['login_ip']}</td>
+                <td>{$v['create_time']}</td>
+                <td>
+                    <a class="edit" href="{:url('edit',['id'=>$v['id']])}"></a>
+                    <a class="del" onclick='if(confirm("你确定要删除吗？")==false){ return false }' href="{:url('del',['id'=>$v['id']])}"></a>
+                </td>
+            </tr>
+            {/foreach}
+            <tr>
+                <td colspan="18" class="pagelist"><div class="total">共{$data['total']}条记录</div>{$data['page']}</td>
+            </tr>
+
+        </table>
+    </form>
+</div>
+{/block}
+{block name = "footer"}
+{/blcok}

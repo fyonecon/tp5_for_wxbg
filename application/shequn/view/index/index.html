@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=0">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="format-detection" content="telephone=no">
+    <title>识别二维码进入</title>
+    <style>
+        html { -ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%; line-height: 1.6 }
+        body { -webkit-touch-callout: none; font-family: -apple-system-font, "Helvetica Neue", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif; background: #fff url("/static/shequn/loading.gif") no-repeat center 100px; min-height: 700px; line-height: inherit; max-width: 960px; min-width: 320px; width: 100%; margin: 0 auto }
+        * { margin: 0; padding: 0 }
+        #ewm { width: 100%; display: block}
+    </style>
+</head>
+<body>
+<div class="image">
+    <img id="ewm" alt="" src="{$img_url}" width="100%"/>
+</div>
+<script src="/static/shequn/jquery-3.1.1.min.js"   integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="   crossorigin="anonymous"></script>
+<script type="text/javascript">
+    function longPress(){
+        timeOutEvent = 0;
+        $.ajax({
+            url:"{$touch_url}",
+            type:'GET'
+        });
+    }
+    $(document).ready(function(){
+        var timeOutEvent=0;
+        $(function(){
+            $("#ewm").on({
+                //开始触摸
+                touchstart: function(e){
+                    timeOutEvent = setTimeout("longPress()",500);
+                },
+                //触摸移动
+                touchmove: function(){
+                    clearTimeout(timeOutEvent);
+                    timeOutEvent = 0;
+                },
+                //触摸结束
+                touchend: function(){
+                    clearTimeout(timeOutEvent);
+                    return false;
+                }
+            });
+        });
+    });
+</script>
+<script>
+    var _hmt = _hmt || [];
+    (function() {
+        var hm = document.createElement("script");
+        hm.src = "https://hm.baidu.com/hm.js?{$tongji}";
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(hm, s);
+    })();
+</script>
+</body>
+</html>
+

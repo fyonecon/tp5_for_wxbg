@@ -1,0 +1,223 @@
+{extend name="hout@layout/base" /}
+{block name="title"}{$title} {/block}
+{block name="header"}
+<script src="/static/admin/js/jquery.js"></script>
+<style>
+    .pointer {
+        cursor: pointer
+    }
+
+    .pointer input {
+        display: none;
+    }
+
+    .list input, .list select {
+        height: 30px;
+        line-height: 30px;
+        padding: 0 5px;
+    }
+</style>
+{/block}
+{block name="body"}
+<div class="info">
+    <div class="tit">{$title}</div>
+    <div class="search">
+        <form action="" method="get">
+            <input type="text" name="name" placeholder="名称" class="w200">
+            <input type="submit" class="coolbg" value="搜索" style="cursor:pointer"/>
+        </form>
+    </div>
+</div>
+<div class="list mT10">
+    <div style="padding: 10px;">
+        <table width="100%" border="0" cellpadding="0" cellspacing="0">
+            <tr class="tit">
+                <th>id</th>
+                <th>域名</th>
+                <th>类型</th>
+                <th>状态</th>
+                <th>备注</th>
+                <th>创建时间</th>
+                <th>更新时间</th>
+                <th width="120">操作</th>
+            </tr>
+            {foreach ($data['data'] as $v)}
+            <tr>
+                <td>{$v['id']}</td>
+                <td class="pointer"><span {$v['status']==1 ? '' : 'style="color:red"'}>{$v['name']}</span><input type="text" name="name" class="inp" data="{$v['id']}"></td>
+                <td>
+                    <select name="type" data="{$v['id']}" class="selects">
+                        <option value="301" {$v['type']=="301" ? 'selected="selected"' : ''}>301</option>
+                        <option value="200" {$v['type']=="200" ? 'selected="selected"' : ''}>200</option>
+                    </select>
+                </td>
+                <td>
+                    <select name="status" data="{$v['id']}" class="selects">
+                        <option {$v['status'] ? 'selected="selected"' : ''} value="1">启用</option>
+                        <option {$v['status'] ? '' : 'selected="selected"'} value="0">禁用</option>
+                    </select>
+                </td>
+                <td class="pointer"><span>{$v['remark']}</span><input type="text" name="remark" class="inp" data="{$v['id']}"></td>
+                <td>{$v['create_time']}</td>
+                <td>{$v['update_time']}</td>
+                <td>
+                    <button class="coolbg delcategory" data="{$v['id']}">删除</button>
+                </td>
+            </tr>
+            {/foreach}
+            <tr>
+                <form id="addcon">
+                    <td></td>
+                    <td><input type="text" name="name" style="width: 200px;"></td>
+                    <td>
+                        <select name="type">
+                            <option value="301">301</option>
+                            <option value="200">200</option>
+                        </select>
+                    </td>
+                    <td>
+                        <select name="status">
+                            <option value="1">启用</option>
+                            <option value="0">禁用</option>
+                        </select>
+                    </td>
+                    <td><input type="text" name="remark" style="width: 350px;"></td>
+                </form>
+                <td></td>
+                <td></td>
+                <td>
+                    <a class="coolbg addcon">
+                        <i class="fa fa-plus"></i>
+                        添加
+                    </a>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="18" class="pagelist">
+                    <div class="total">共{$data['total']}条记录</div>
+                    {$data['page']}
+                </td>
+            </tr>
+        </table>
+    </div>
+</div>
+{/block}
+{block name="footer"}
+<script>
+    $(".addcon").click(function () {
+        $.ajax({
+            type: 'post',
+            url: '{:url("hostsadd")}',
+            data: $('#addcon').serialize(),
+            async: false,  //默认异步
+            cache: false,  //清除缓存
+            dataType: 'json',
+            success: function (data) {
+                if (data) {
+                    window.location.reload(true);
+                }
+            },
+            error: function () {
+                alert('添加失败');
+            }
+        });
+    });
+    $(".pointer").on("click", function () {
+        $(this).children("input").show().focus().val($(this).children("span").text());
+        $(this).children("span").hide();
+    });
+    $(".inp").on("blur", function () {
+        var id = $(this).attr("data");
+        var field = $(this).attr("name");
+        var oldval = $(this).siblings("span").text();
+        var newval = $(this).val() ? $(this).val() : $(this).siblings("span").text();
+        $(this).hide();
+        $(this).siblings("span").show().text(newval);
+
+        if (oldval == newval) {
+            return;
+        }
+        $.ajax({
+            type: 'post',
+            url: '{:url("hostsupdate")}',
+            data: {
+                value: newval,
+                field: field,
+                id: id
+            },
+            async: false,  //默认异步
+            cache: false,  //清除缓存
+            dataType: 'json',
+            success: function (data) {
+                if (data) {
+                    //alert('修改成功');
+                    window.location.reload(true);
+                }
+            },
+            error: function () {
+                alert('修改失败');
+            }
+        });
+    });
+
+    $(".delcategory").on("click", function () {
+        var r = confirm("你确定要删除吗？");
+        if (r == false) {
+            return false
+        }
+        var id = $(this).attr("data");
+        var box = $(this).parents('tr');
+        $.ajax({
+            type: 'post',
+            url: '{:url("hostsdel")}',
+            data: {
+                id: id
+            },
+            async: false,  //默认异步
+            cache: false,  //清除缓存
+            dataType: 'json',
+            success: function (data) {
+                if (data) {
+                    box.hide();
+                    //alert('删除成功');
+                    window.location.reload(true);
+                }
+                else {
+                    alert('删除失败');
+                }
+            },
+            error: function () {
+                alert('删除失败');
+            }
+        });
+    });
+
+
+    $(".selects").on("change", function () {
+        var value = $(this).val();
+        var field = $(this).attr('name');
+        var id = $(this).attr('data');
+        $.ajax({
+            type: 'post',
+            url: '{:url("hostsupdate")}',
+            data: {
+                value: value,
+                field: field,
+                id: id
+            },
+            async: false,  //默认异步
+            cache: false,  //清除缓存
+            dataType: 'json',
+            success: function (data) {
+                if (data) {
+                    //alert('修改成功');
+                    window.location.reload(true);
+                }
+            },
+            error: function () {
+                alert('修改失败');
+            }
+        });
+    });
+</script>
+{/block}
